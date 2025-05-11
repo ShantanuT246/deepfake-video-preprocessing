@@ -119,4 +119,4 @@ deepfake-video-preprocessing/
 ## 👨‍💻 Author
 
 Shantanu Tapole  
-Deepfake Preprocessing Project (2025)
+Deepfake Preprocessing Project
