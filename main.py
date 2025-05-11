@@ -1,5 +1,6 @@
 import cv2 as cv
 import os
+from matplotlib import pyplot as plt
 
 def extract_frames(video_path, output_path, interval = 10):
     video = cv.VideoCapture(video_path)
@@ -51,3 +52,56 @@ def detect_faces_and_crop(video_path, output_path):
 # detect_faces_and_crop("videos/02_13__outside_talking_still_laughing__CP5HFV3K.mp4", "faces/02_13__outside_talking_still_laughing__CP5HFV3K")
 # detect_faces_and_crop("videos/02_18__outside_talking_pan_laughing__OXMEEFUQ.mp4", "faces/02_18__outside_talking_pan_laughing__OXMEEFUQ")
 # detect_faces_and_crop("videos/02_21__talking_angry_couch__Z0XHPQAR.mp4", "faces/02_21__talking_angry_couch__Z0XHPQAR") 
+
+#Basic Comparison Example This shows how much the face changed between two frames.
+def extract_temporal_faces(path1, path2):
+    face1 = cv.imread(path1)
+    face2 = cv.imread(path2)
+    face1 = cv.resize(face1, (256, 256))
+    face2 = cv.resize(face2, (256, 256))
+    diff = cv.absdiff(face1, face2)
+    cv.imshow("Diff", diff)
+    cv.waitKey(0)
+
+# extract_temporal_faces("faces/01_03__hugging_happy__ISF9SP4G/01_03__hugging_happy__ISF9SP4 frame => 525.jpg", "faces/01_03__hugging_happy__ISF9SP4G/01_03__hugging_happy__ISF9SP4 frame => 535.jpg")
+
+#Blurring (detect over-smoothing from deepfakes)
+def bluring(img):
+    blur = cv.imread(img)
+    blur = cv.GaussianBlur(blur, (7,7), 5)
+    cv.imshow("Blured", blur)
+    cv.waitKey(0)
+
+# bluring("faces/01_03__hugging_happy__ISF9SP4G/01_03__hugging_happy__ISF9SP4 frame => 505.jpg")
+
+#Histogram analysis
+def histogram(img):
+    frame = cv.imread(img)
+    for i, col in enumerate(['b', 'g', 'r']):
+        hist = cv.calcHist([frame], [i], None, [256], [0,256])
+        plt.plot(hist, color = col)
+    plt.title("Color Histogram")
+    plt.show()
+
+# histogram("faces/02_13__outside_talking_still_laughing__CP5HFV3K/02_13__outside_talking_still_laughing__CP5HFV3 frame => 107.jpg")
+
+# Canny edge detection which helps detect unnatural edges or artifacts.
+def canny_edge_detection(img):
+    frame = cv.imread(img)
+    gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    edges = cv.Canny(gray, 100, 200)
+    cv.imshow("Canny Edges", edges)
+    cv.waitKey(0)
+
+# canny_edge_detection("faces/02_13__outside_talking_still_laughing__CP5HFV3K/02_13__outside_talking_still_laughing__CP5HFV3 frame => 10.jpg")
+
+# Color Channel Splitting which can reveal irregularities in one color channel not visible in the full image.
+def split_channels(img):
+    frame = cv.imread(img)
+    b, g, r = cv.split(frame)
+    cv.imshow("Blue", b)
+    cv.imshow("Green", g)
+    cv.imshow("Red", r)
+    cv.waitKey(0)
+
+# split_channels("faces/02_13__outside_talking_still_laughing__CP5HFV3K/02_13__outside_talking_still_laughing__CP5HFV3 frame => 50.jpg")
